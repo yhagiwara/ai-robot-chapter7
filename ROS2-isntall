@@ -1,2 +1,8 @@
 Link how to install ROS2
 https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Binary.html
+
+Start to install ROS2 from the following link:
+https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html
+
+.bashrcにsourceのコマンドを追記する。
+
