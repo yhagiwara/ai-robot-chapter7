@@ -13,6 +13,10 @@ class SpeechRecognition(rclpy.node.Node):
 
         self.recognized_pub = self.create_publisher(String, "recognized_text", 10)
 
+        # [TODO]
+        #
+        # 音声認識を行うプログラムを作成
+
         sleep(5)
         self.test("Bring me a bottle from dining")
 
