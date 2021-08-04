@@ -3,7 +3,7 @@ import rclpy.node
 from std_msgs.msg import String    
     
 from gtts import gTTS
-from subprocess import call
+from subprocess import run, PIPE
 
 import os
 
@@ -23,7 +23,7 @@ class SpeechSynthesis(rclpy.node.Node):
         tts = gTTS(msg.data)
         tts.save("voice.mp3")
         
-        call(self.CMD.split())
+        run(self.CMD.split(), stdout=PIPE, stderr=PIPE)
         self.logger.info("Speeched text")
         os.remove("voice.mp3")
     

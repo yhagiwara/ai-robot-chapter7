@@ -24,6 +24,8 @@ class SpeechRecognition(rclpy.node.Node):
         # 音声認識を行うプログラムを作成
 
     def recognition(self):
+        msg = String()
+
         with sr.Microphone() as source:
             audio_data = self.init_rec.record(source, duration=5)
             print("Recognizing your speech.......")
@@ -31,12 +33,12 @@ class SpeechRecognition(rclpy.node.Node):
             try:
                 text = self.init_rec.recognize_google(audio_data)
                 print(text)
+                msg.data = text
 
             except sr.UnknownValueError:
                 pass
 
-        msg = String()
-        msg.data = "Bring me a bottle from dining"
+        #msg.data = "Bring me a bottle from dining"
         self.recognized_pub.publish(msg)
         self.logger.info("Published recognized text '{}'".format(msg.data))
 
