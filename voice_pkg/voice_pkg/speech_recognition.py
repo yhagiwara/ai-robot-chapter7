@@ -14,7 +14,7 @@ class SpeechRecognition(rclpy.node.Node):
         self.recognized_pub = self.create_publisher(String, "recognized_text", 10)
 
         sleep(5)
-        self.test("test")
+        self.test("Bring me a bottle from dining")
 
     def test(self, text):
         msg = String()
