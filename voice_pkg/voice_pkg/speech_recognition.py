@@ -20,19 +20,16 @@ class SpeechRecognition(rclpy.node.Node):
 
         self.timer = self.create_timer(self.period, self.recognition)
 
-        # [TODO]
-        # 音声認識を行うプログラムを作成
-
     def recognition(self):
         msg = String()
 
         with sr.Microphone() as source:
             audio_data = self.init_rec.record(source, duration=5)
-            print("Recognizing your speech.......")
+            self.logger.info("Recognizing your speech.......")
 
             try:
                 text = self.init_rec.recognize_google(audio_data)
-                print(text)
+                self.logger.info(text)
                 msg.data = text
 
             except sr.UnknownValueError:
