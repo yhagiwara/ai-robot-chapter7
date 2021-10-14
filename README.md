@@ -27,3 +27,17 @@ https://docs.ros.org/en/foxy/Tutorials/Turtlesim/Introducing-Turtlesim.html
 ROS2のインストールと動作確認は終了です。
 
 ## Turtlebot3シミュレーションの起動手順
+### GAZEBO_MODEL_PATHの設定
+Gazeboで任意のモデルを使うときは，どこからモデルを呼び出すのかを環境変数に定義する必要があります．  
+そのため以下のコマンドをturtlebot3_simulationsの中に存在するmodelsフォルダー内で実行してください．  
+```bash
+export GAZEBO_MODEL_PATH=`pwd`:$GAZEBO_MOD_PATH
+```
+登録されたGAZEBO_MODEL_PATHは以下のコマンドで確認できます．
+```bash
+export | grep GAZEBO_MODEL_PATH
+```
+確認できたPATHを.bashrcに記述しておくことで，毎回コマンドを実行する必要がなくなります．
+```bash
+export GAZEBO_MODEL_PATH={確認したPATH}:$GAZEBO_MODEL_PATH
+```
