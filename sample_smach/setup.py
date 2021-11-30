@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'sample=sample_smach.node:main'
+            'sample=sample_smach.main_sm:main'
         ],
     },
 )
