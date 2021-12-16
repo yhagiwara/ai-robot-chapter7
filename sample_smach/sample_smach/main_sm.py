@@ -10,7 +10,20 @@ from random import random
 from geometry_msgs.msg import Pose
 
 
-class VoiceState(smach.State):
+def main():
+    rclpy.init()
+
+    sm_top = smach.StateMachine(outcomes=['succeeded'])
+
+    with sm_top:
+        smach.StateMachine.add("VoiceState", VOICE_STATE(), transitions={"succeeded": "NavigationState", "failed": "VoiceState"})
+        smach.StateMachine.add("NavigationState", NAVIGATION_STATE(), transitions={"succeeded": "VisionState", "failed": "VoiceState"})
+        smach.StateMachine.add("VisionState", VISION_STATE(), transitions={"succeeded": "ManipulationState", "failed": "VoiceState"})
+        smach.StateMachine.add("ManipulationState", MANIPULATION_STATE(), transitions={"failed": "VisionState", "exit": "succeeded"})
+
+    outcome = sm_top.execute()
+
+class VOICE_STATE(smach.State):
     def __init__(self):
         smach.State.__init__(self, output_keys=["target_object"], outcomes=["succeeded", "failed"])
 
@@ -34,7 +47,7 @@ class VoiceState(smach.State):
             return "failed"
 
 
-class NavigationState(smach.State):
+class NAVIGATION_STATE(smach.State):
     def __init__(self):
         smach.State.__init__(self, input_keys=["target_object"], outcomes=["succeeded", "failed"])
 
@@ -60,7 +73,7 @@ class NavigationState(smach.State):
         return "failed"
 
 
-class VisionState(smach.State):
+class VISION_STATE(smach.State):
     def __init__(self):
         smach.State.__init__(self, input_keys=["target_object"], output_keys=["target_object_pos"], outcomes=["succeeded", "failed"])
 
@@ -92,7 +105,7 @@ class VisionState(smach.State):
             return False, ()
 
 
-class ManipulationState(smach.State):
+class MANIPULATION_STATE(smach.State):
     def __init__(self):
         smach.State.__init__(self, input_keys=["target_object_pos"], outcomes=["exit", "failed"])
 
@@ -130,18 +143,6 @@ class ManipulationState(smach.State):
             return False
 
 
-def main():
-    rclpy.init()
-
-    sm_top = smach.StateMachine(outcomes=['succeeded'])
-
-    with sm_top:
-        smach.StateMachine.add("VoiceState", VoiceState(), transitions={"succeeded": "NavigationState", "failed": "VoiceState"})
-        smach.StateMachine.add("NavigationState", NavigationState(), transitions={"succeeded": "VisionState", "failed": "VoiceState"})
-        smach.StateMachine.add("VisionState", VisionState(), transitions={"succeeded": "ManipulationState", "failed": "VoiceState"})
-        smach.StateMachine.add("ManipulationState", ManipulationState(), transitions={"failed": "VisionState", "exit": "succeeded"})
-
-    outcome = sm_top.execute()
 
 if __name__ == '__main__':
     main()
