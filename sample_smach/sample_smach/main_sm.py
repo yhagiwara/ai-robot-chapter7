@@ -4,10 +4,8 @@ import rclpy
 from rclpy.node import Node
 import smach
 
-from time import sleep
-from random import random
+from ai_robot_book_interfaces.srv import StringCommand
 
-from geometry_msgs.msg import Pose
 
 
 def main():
@@ -23,28 +21,47 @@ def main():
 
     outcome = sm_top.execute()
 
+
 class VOICE_STATE(smach.State):
     def __init__(self):
         smach.State.__init__(self, output_keys=["target_object"], outcomes=["succeeded", "failed"])
 
-        # Define logger
+        # Create node    
         self.node = Node("VoiceState")
-        self.logger = self.node.get_logger()
+        self.logger = self.node.get_logger()    
+    
+        self.cli = self.node.create_client(StringCommand, 'voice/command')    
+    
+        while not self.cli.wait_for_service(timeout_sec=1.0):    
+            self.logger.info('service not available, waiting again...')    
+        self.req = StringCommand.Request()
+
+        self.result = None
 
     def execute(self, userdata):
         self.logger.info("Start voice recognition")
-        userdata.target_object = "Bottle" # 音声認識による結果をtarget_objectに入力
 
-        prob = random()
+        result = self.send_request()
 
-        sleep(1.0)
-    
-        if prob > 0.3:
-            self.logger.info("Succeeded voice recognition")
+        if result:
             return "succeeded"
         else:
-            self.logger.info("Failed voice recognition and retry to recognize")
             return "failed"
+
+    def send_request(self):    
+        self.req.command = "check"    
+        self.future = self.cli.call_async(self.req)
+
+        while rclpy.ok():
+            rclpy.spin_once(self.node)
+            if self.future.done():
+                response = self.future.result()
+                break
+
+        if response.answer=="succeeded":
+            return True
+        else:
+            return False
 
 
 class NAVIGATION_STATE(smach.State):
@@ -53,24 +70,39 @@ class NAVIGATION_STATE(smach.State):
 
         # Define logger
         self.node = Node("NavigationState")
-        self.logger = self.node.get_logger()
+        self.logger = self.node.get_logger()    
+    
+        self.cli = self.node.create_client(StringCommand, 'navigation/command')    
+    
+        while not self.cli.wait_for_service(timeout_sec=1.0):    
+            self.logger.info('service not available, waiting again...')    
+        self.req = StringCommand.Request()
+
+        self.result = None
 
     def execute(self, userdata):
 
-        prob = random()
+        result = self.send_request()
 
-        sleep(1.0)
+        if result:
+            return "succeeded"
+        else:
+            return "failed"
 
-        if userdata.target_object == "Bottle":
-        
-            if prob > 0.4:
-                self.logger.info("Moved to x:1.0, y:1.0")
-                return "succeeded"
-            else:
-                self.logger.info("Failed to move")
-                return "failed"
+    def send_request(self):    
+        self.req.command = "check"    
+        self.future = self.cli.call_async(self.req)
 
-        return "failed"
+        while rclpy.ok():
+            rclpy.spin_once(self.node)
+            if self.future.done():
+                response = self.future.result()
+                break
+
+        if response.answer=="succeeded":
+            return True
+        else:
+            return False
 
 
 class VISION_STATE(smach.State):
@@ -79,30 +111,38 @@ class VISION_STATE(smach.State):
 
         # Define logger
         self.node = Node("VisionState")
-        self.logger = self.node.get_logger()
+        self.logger = self.node.get_logger()    
+    
+        self.cli = self.node.create_client(StringCommand, 'vision/command')    
+    
+        while not self.cli.wait_for_service(timeout_sec=1.0):    
+            self.logger.info('service not available, waiting again...')    
+        self.req = StringCommand.Request()
+
+        self.result = None
 
     def execute(self, userdata):
-        sleep(1.0)
-
-        target_object = userdata.target_object
-
-        result, target_object_pos = self.detect_object_using_YOLO(target_object)
+        result = self.send_request()
 
         if result:
-            userdata.target_object_pos = target_object_pos
             return "succeeded"
         else:
             return "failed"
 
-    def detect_object_using_YOLO(self, target_object):
-        prob = random()
+    def send_request(self):    
+        self.req.command = "check"    
+        self.future = self.cli.call_async(self.req)
 
-        if prob > 0.2:
-            self.logger.info(f"Detected {target_object}")
-            return True, (1.1, 1.2, 0.5)
+        while rclpy.ok():
+            rclpy.spin_once(self.node)
+            if self.future.done():
+                response = self.future.result()
+                break
+
+        if response.answer=="succeeded":
+            return True
         else:
-            self.logger.info(f"Not found {target_object}")
-            return False, ()
+            return False
 
 
 class MANIPULATION_STATE(smach.State):
@@ -111,37 +151,40 @@ class MANIPULATION_STATE(smach.State):
 
         # Define logger
         self.node = Node("ManipulationState")
-        self.logger = self.node.get_logger()
+        self.logger = self.node.get_logger()    
+    
+        self.cli = self.node.create_client(StringCommand, 'vision/command')    
+    
+        while not self.cli.wait_for_service(timeout_sec=1.0):    
+            self.logger.info('service not available, waiting again...')    
+        self.req = StringCommand.Request()
+
+        self.result = None
 
     def execute(self, userdata):
         self.logger.info(f"Try to grasp the target object")
 
-        sleep(1.0)
-
-        target_object_pos = userdata.target_object_pos
-
-        result = self.manipulate(target_object_pos)
+        result = self.send_request()
 
         if result:
-            self.logger.info("Bring me task is completed")
             return "exit"
         else:
-            self.logger.info("Retry to find the target object")
             return "failed"
 
-    def manipulate(self, target_object_pos):
-        prob = random()
+    def send_request(self):    
+        self.req.command = "check"    
+        self.future = self.cli.call_async(self.req)
 
-        pos = target_object_pos
-        self.logger.info(f"Now reaching the target object x:{pos[0]} y:{pos[1]} z:{pos[2]}")
+        while rclpy.ok():
+            rclpy.spin_once(self.node)
+            if self.future.done():
+                response = self.future.result()
+                break
 
-        if prob > 0.3:
-            self.logger.info("Succeeded to grasp the target object")
+        if response.answer=="succeeded":
             return True
         else:
-            self.logger.info("Failed to grasp the target object")
             return False
-
 
 
 if __name__ == '__main__':

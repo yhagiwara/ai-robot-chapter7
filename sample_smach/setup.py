@@ -1,4 +1,7 @@
+import os
+from glob import glob
 from setuptools import setup
+
 
 package_name = 'sample_smach'
 
@@ -10,6 +13,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        (os.path.join('share', package_name), glob('launch/*.launch.py')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -20,7 +24,12 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'sample=sample_smach.main_sm:main'
+            'sample=sample_smach.main_sm:main',
+            'sample_1=sample_smach.sample_sm:main',
+            'manipulation=sample_smach.manipulation_node:main',
+            'navigation=sample_smach.navigation_node:main',
+            'vision=sample_smach.vision_node:main',
+            'voice=sample_smach.voice_node:main'
         ],
     },
 )

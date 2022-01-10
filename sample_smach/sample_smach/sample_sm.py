@@ -2,7 +2,7 @@
 
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String
+from ai_robot_book_interfaces.srv import StringCommand
 
 import smach
 
@@ -13,30 +13,26 @@ class SampleState(smach.State):
 
         # Create node
         self.node = Node("sample_state")
+        self.logger = self.node.get_logger()
 
-        # Create publisher and subscription
-        self.sample_state_publisher = self.node.create_publisher(String, "/sample/request", 1)
-        self.sample_state_subscriber = self.node.create_subscription(String, "/sample/response", self.sample_callback, 1)
+        self.cli = self.node.create_client(StringCommand, 'command')
+
+        while not self.cli.wait_for_service(timeout_sec=1.0):
+            self.logger.info('service not available, waiting again...')
+        self.req = StringCommand.Request()
 
         self.result = None
 
     def execute(self, userdata):
-        msg = String()
-        msg.data = "Hello"
 
-        # Loop until message is recieved
-        while self.result is None:
-            self.sample_state_publisher.publish(msg)
-            # Below program is important
-            # Node about to spin at once
-            rclpy.spin_once(self.node, timeout_sec=0.1)
-
-        print(self.result)
+        self.send_request()
 
         return "exit"
 
-    def sample_callback(self, msg):
-        self.result = msg
+    def send_request(self):
+        self.req.command = "check"
+        self.future = self.cli.call_async(self.req)
+        print(self.future)
 
 
 def main():
