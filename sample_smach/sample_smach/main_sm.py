@@ -14,15 +14,15 @@ def main():
     sm_top = smach.StateMachine(outcomes=['succeeded'])
 
     with sm_top:
-        smach.StateMachine.add("VoiceState", VOICE_STATE(), transitions={"succeeded": "NavigationState", "failed": "VoiceState"})
-        smach.StateMachine.add("NavigationState", NAVIGATION_STATE(), transitions={"succeeded": "VisionState", "failed": "VoiceState"})
-        smach.StateMachine.add("VisionState", VISION_STATE(), transitions={"succeeded": "ManipulationState", "failed": "VoiceState"})
-        smach.StateMachine.add("ManipulationState", MANIPULATION_STATE(), transitions={"failed": "VisionState", "exit": "succeeded"})
+        smach.StateMachine.add("VOICE", Voice(), transitions={"succeeded": "NAVIGATION", "failed": "VOICE"})    
+        smach.StateMachine.add("NAVIGATION", Navigation(), transitions={"succeeded": "VISION", "failed": "NAVIGATION"})
+        smach.StateMachine.add("VISION", Vision(), transitions={"succeeded": "MANIPULATION", "failed": "VISION"})    
+        smach.StateMachine.add("MANIPULATION", Manipulation(), transitions={"failed": "VISION", "exit": "succeeded"})    
 
     outcome = sm_top.execute()
 
 
-class VOICE_STATE(smach.State):
+class Voice(smach.State):
     def __init__(self):
         smach.State.__init__(self, output_keys=["target_object"], outcomes=["succeeded", "failed"])
 
@@ -64,7 +64,7 @@ class VOICE_STATE(smach.State):
             return False
 
 
-class NAVIGATION_STATE(smach.State):
+class Navigation(smach.State):
     def __init__(self):
         smach.State.__init__(self, input_keys=["target_object"], outcomes=["succeeded", "failed"])
 
@@ -105,7 +105,7 @@ class NAVIGATION_STATE(smach.State):
             return False
 
 
-class VISION_STATE(smach.State):
+class Vision(smach.State):
     def __init__(self):
         smach.State.__init__(self, input_keys=["target_object"], output_keys=["target_object_pos"], outcomes=["succeeded", "failed"])
 
@@ -145,7 +145,7 @@ class VISION_STATE(smach.State):
             return False
 
 
-class MANIPULATION_STATE(smach.State):
+class Manipulation(smach.State):
     def __init__(self):
         smach.State.__init__(self, input_keys=["target_object_pos"], outcomes=["exit", "failed"])
 
