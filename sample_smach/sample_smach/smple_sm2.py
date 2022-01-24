@@ -1,4 +1,4 @@
-# ファイル名：state_machine2.py
+# ファイル名：sample_sm2.py
 #!/usr/bin/env python
 import rclpy
 from rclpy.node import Node
