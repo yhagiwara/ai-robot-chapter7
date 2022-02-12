@@ -1,6 +1,6 @@
 from setuptools import setup
 
-package_name = 'sample_node'
+package_name = 'bringme_sm_pkg'
 
 setup(
     name=package_name,
@@ -20,6 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'bringme_sm = bringme_sm_pkg.bringme_sm:main'
         ],
     },
 )

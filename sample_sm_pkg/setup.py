@@ -1,26 +1,31 @@
+import os
 from setuptools import setup
+from glob import glob
 
-package_name = 'ros2_my_package'
+package_name = 'sample_sm_pkg'
 
 setup(
     name=package_name,
     version='0.0.0',
-    packages=['scripts'],
+    packages=[package_name],
     data_files=[
         ('share/ament_index/resource_index/packages',
-            []),
+            ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        (os.path.join('share', package_name), glob('launch/*.launch.py'))
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='ito-masaki',
-    maintainer_email='ito.masaki@em.ci.ritsumei.ac.jp',
+    maintainer='root',
+    maintainer_email='root@todo.todo',
     description='TODO: Package description',
     license='TODO: License declaration',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'talker=scripts.talker:main',
+            'sample_sm = sample_sm_pkg.sample_sm:main',
+            'sample_sm2 = sample_sm_pkg.sample_sm2:main',
+            'sample_sm3 = sample_sm_pkg.sample_sm3:main'
         ],
     },
 )
