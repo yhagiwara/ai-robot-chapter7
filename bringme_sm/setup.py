@@ -1,8 +1,6 @@
-import os
 from setuptools import setup
-from glob import glob
 
-package_name = 'sample_sm_pkg'
+package_name = 'bringme_sm'
 
 setup(
     name=package_name,
@@ -12,20 +10,17 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        (os.path.join('share', package_name), glob('launch/*.launch.py'))
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='root',
-    maintainer_email='root@todo.todo',
+    maintainer='ito-masaki',
+    maintainer_email='ito.masaki@em.ci.ritsumei.ac.jp',
     description='TODO: Package description',
     license='TODO: License declaration',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'sample_sm = sample_sm_pkg.sample_sm:main',
-            'sample_sm2 = sample_sm_pkg.sample_sm2:main',
-            'sample_sm3 = sample_sm_pkg.sample_sm3:main'
+            'bringme_sm = bringme_sm.bringme_sm:main'
         ],
     },
 )

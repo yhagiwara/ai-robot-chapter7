@@ -1,6 +1,6 @@
 from setuptools import setup
 
-package_name = 'pseudo_node_pkg'
+package_name = 'sample_sm'
 
 setup(
     name=package_name,
@@ -13,17 +13,14 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='root',
-    maintainer_email='root@todo.todo',
+    maintainer='ito-masaki',
+    maintainer_email='ito.masaki@em.ci.ritsumei.ac.jp',
     description='TODO: Package description',
     license='TODO: License declaration',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'manipulation_node = pseudo_node_pkg.manipulation_node:main',
-            'navigation_node = pseudo_node_pkg.navigation_node:main',
-            'vision_node = pseudo_node_pkg.vision_node:main',
-            'voice_node = pseudo_node_pkg.voice_node:main'
+            'sample_sm = sample_sm.sample_sm:main'
         ],
     },
 )
