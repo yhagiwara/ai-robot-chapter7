@@ -20,7 +20,10 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'pseudo_node = pseudo_node.pseudo_node:main'
+            'manipulation_node = pseudo_node.manipulation_node:main',
+            'navigation_node = pseudo_node.navigation_node:main',
+            'vision_node = pseudo_node.vision_node:main',
+            'voice_node = pseudo_node.voice_node:main'
         ],
     },
 )

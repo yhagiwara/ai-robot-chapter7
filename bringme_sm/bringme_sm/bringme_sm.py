@@ -7,26 +7,29 @@ import smach
 from ai_robot_book_interfaces.srv import StringCommand
 
 
-def main():
-    rclpy.init()
+class Bringme_state(Node):
+    def __init__(self):
+        super().__init__("bringme_state")
 
-    sm_top = smach.StateMachine(outcomes=['succeeded'])
+    def execute(self):
+        sm = smach.StateMachine(outcomes=["succeeded"])
 
-    with sm_top:
-        smach.StateMachine.add("VOICE", Voice(), transitions={"succeeded": "NAVIGATION", "failed": "VOICE"})
-        smach.StateMachine.add("NAVIGATION", Navigation(), transitions={"succeeded": "VISION", "failed": "NAVIGATION"})
-        smach.StateMachine.add("VISION", Vision(), transitions={"succeeded": "MANIPULATION", "failed": "VISION"})
-        smach.StateMachine.add("MANIPULATION", Manipulation(), transitions={"failed": "VISION", "exit": "succeeded"})
+        with sm:
+            smach.StateMachine.add("VOICE", Voice(self), transitions={"succeeded": "NAVIGATION", "failed": "VOICE"})
+            smach.StateMachine.add("NAVIGATION", Navigation(self), transitions={"succeeded": "VISION", "failed": "NAVIGATION"})
+            smach.StateMachine.add("VISION", Vision(self), transitions={"succeeded": "MANIPULATION", "failed": "VISION"})
+            smach.StateMachine.add("MANIPULATION", Manipulation(self), transitions={"failed": "VISION", "exit": "succeeded"})
 
-    outcome = sm_top.execute()
+        outcome = sm.execute()
 
 
 class Voice(smach.State):
-    def __init__(self):
+    def __init__(self, node):
         smach.State.__init__(self, output_keys=["target_object"], outcomes=["succeeded", "failed"])
 
+        self.node = node
+
         # Create node    
-        self.node = Node("VoiceState")
         self.logger = self.node.get_logger()
 
         self.cli = self.node.create_client(StringCommand, 'voice/command')
@@ -62,12 +65,14 @@ class Voice(smach.State):
         else:
             return False
 
+
 class Navigation(smach.State):    
-    def __init__(self):           
+    def __init__(self, node):           
         smach.State.__init__(self, input_keys=["target_object"], outcomes=["succeeded", "failed"])    
-                                                                                                      
+
+        self.node = node
+
         # Define logger                                                                               
-        self.node = Node("NavigationState")    
         self.logger = self.node.get_logger()    
                                                 
         self.cli = self.node.create_client(StringCommand, 'navigation/command')    
@@ -102,12 +107,14 @@ class Navigation(smach.State):
         else:                               
             return False
 
+
 class Vision(smach.State):    
-    def __init__(self):    
+    def __init__(self, node):    
         smach.State.__init__(self, input_keys=["target_object"], output_keys=["target_object_pos"], outcomes=["succeeded", "failed"])
-     
+
+        self.node = node
+
         # Define logger
-        self.node = Node("VisionState")
         self.logger = self.node.get_logger()
                                                     
         self.cli = self.node.create_client(StringCommand, 'vision/command')
@@ -141,12 +148,14 @@ class Vision(smach.State):
         else:              
             return False
 
+
 class Manipulation(smach.State):    
-    def __init__(self):    
+    def __init__(self, node):    
         smach.State.__init__(self, input_keys=["target_object_pos"], outcomes=["exit", "failed"])    
-    
+
+        self.node = node
+
         # Define logger    
-        self.node = Node("ManipulationState")    
         self.logger = self.node.get_logger()        
         
         self.cli = self.node.create_client(StringCommand, 'vision/command')        
@@ -162,9 +171,9 @@ class Manipulation(smach.State):
     
         result = self.send_request()    
     
-        if result:    
+        if result:
             return "exit"    
-        else:    
+        else:
             return "failed"    
     
     def send_request(self):        
@@ -181,7 +190,12 @@ class Manipulation(smach.State):
             return True    
         else:    
             return False    
-    
+
+
+def main():
+    rclpy.init()
+    node = Bringme_state()
+    node.execute()
     
 if __name__ == '__main__':    
     main()
