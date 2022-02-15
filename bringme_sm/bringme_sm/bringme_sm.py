@@ -22,6 +22,14 @@ class Bringme_state(Node):
 
         outcome = sm.execute()
 
+def main():
+    rclpy.init()
+    node = Bringme_state()
+    node.execute()
+    
+if __name__ == '__main__':    
+    main()
+
 
 class Voice(smach.State):
     def __init__(self, node):
@@ -40,30 +48,33 @@ class Voice(smach.State):
 
         self.result = None
 
-    def execute(self, userdata):
-        self.logger.info("Start voice recognition")
-
-        result = self.send_request()
-
-        if result:
-            return "succeeded"
-        else:
+    def execute(self, userdata):        
+        self.logger.info("Start voice recognition")        
+        
+        self.req.command = "start"        
+        result = self.send_request()        
+            
+        target_object = "cup" # find_object_name(result)    
+        target_location = "kitchen" # find_location_name(result)    
+        userdata.target_object = target_object    
+        userdata.target_location = target_location    
+            
+        if len(target_object) > 0 and len(target_location) > 0:    
+            return "succeeded"        
+        else:        
             return "failed"
 
-    def send_request(self):
-        self.req.command = "check"
-        self.future = self.cli.call_async(self.req)
-
-        while rclpy.ok():
-            rclpy.spin_once(self.node)
-            if self.future.done():
+    def send_request(self):    
+        self.future = self.cli.call_async(self.req)    
+    
+        while rclpy.ok():    
+            rclpy.spin_once(self.node)    
+            if self.future.done():    
                 response = self.future.result()
+                response.answer = "Bring me a cup from kitchen"
                 break
 
-        if response.answer=="succeeded":
-            return True
-        else:
-            return False
+        return response.answer
 
 
 class Navigation(smach.State):    
@@ -82,29 +93,29 @@ class Navigation(smach.State):
         self.req = StringCommand.Request()                                 
                                                                                
         self.result = None                    
-                              
-    def execute(self, userdata):    
-                                    
-        result = self.send_request()    
-                                        
-        if result:                      
-            return "succeeded"    
-        else:                     
-            return "failed"       
-                               
+
+    def execute(self, userdata):
+
+        self.req.command = userdata.target_location    
+        result = self.send_request()
+
+        if result:
+            return "succeeded"
+        else:
+            return "failed"
+
     def send_request(self):    
-        self.req.command = "check"    
-        self.future = self.cli.call_async(self.req)    
-                                                       
-        while rclpy.ok():                              
-            rclpy.spin_once(self.node)    
-            if self.future.done():        
-                response = self.future.result()    
-                break                              
-                                                   
-        if response.answer=="succeeded":    
-            return True                     
-        else:                               
+        self.future = self.cli.call_async(self.req)
+
+        while rclpy.ok():
+            rclpy.spin_once(self.node)
+            if self.future.done():
+                response = self.future.result()
+                break
+
+        if response.answer=="reached":
+            return True
+        else:
             return False
 
 
@@ -124,28 +135,29 @@ class Vision(smach.State):
         self.req = StringCommand.Request()                                     
                                               
         self.result = None
-                              
+
     def execute(self, userdata):
+
+        self.req.command = userdata.target_object   
         result = self.send_request()
-                                        
+
         if result:
             return "succeeded"
-        else:                     
+        else:
             return "failed"
-                               
-    def send_request(self):
-        self.req.command = "check" 
+
+    def send_request(self):    
         self.future = self.cli.call_async(self.req)
-                                                       
+
         while rclpy.ok():
             rclpy.spin_once(self.node)
-            if self.future.done():        
+            if self.future.done():
                 response = self.future.result()
-                break                              
-                         
-        if response.answer=="succeeded":
-            return True                     
-        else:              
+                break
+
+        if response.answer=="detected":
+            return True
+        else:
             return False
 
 
@@ -165,37 +177,30 @@ class Manipulation(smach.State):
         self.req = StringCommand.Request()    
     
         self.result = None    
-    
-    def execute(self, userdata):    
-        self.logger.info(f"Try to grasp the target object")    
-    
-        result = self.send_request()    
-    
+
+    def execute(self, userdata):
+        self.logger.info("Try to grasp the target object")
+
+        self.req.command = "start"    
+        result = self.send_request()
+
         if result:
-            return "exit"    
+            return "exit"
         else:
-            return "failed"    
-    
-    def send_request(self):        
-        self.req.command = "check"        
-        self.future = self.cli.call_async(self.req)    
-    
-        while rclpy.ok():    
-            rclpy.spin_once(self.node)    
-            if self.future.done():    
-                response = self.future.result()    
-                break    
-    
-        if response.answer=="succeeded":    
-            return True    
-        else:    
-            return False    
+            return "failed"
+
+    def send_request(self):    
+        self.future = self.cli.call_async(self.req)
+
+        while rclpy.ok():
+            rclpy.spin_once(self.node)
+            if self.future.done():
+                response = self.future.result()
+                break
+
+        if response.answer=="reached":
+            return True
+        else:
+            return False
 
 
-def main():
-    rclpy.init()
-    node = Bringme_state()
-    node.execute()
-    
-if __name__ == '__main__':    
-    main()
