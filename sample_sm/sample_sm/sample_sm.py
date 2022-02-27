@@ -1,50 +1,63 @@
-#!/usr/bin/env python
-
+# ファイル名：sample_sm.py
+    
 import rclpy
 from rclpy.node import Node
-from ai_robot_book_interfaces.srv import StringCommand
-
 import smach
 
 
-class SampleState(smach.State):
-    def __init__(self):
-        smach.State.__init__(self, output_keys=["target_object"], outcomes=["exit"])
-
-        # Create node
-        self.node = Node("sample_state")
-        self.logger = self.node.get_logger()
-
-        self.cli = self.node.create_client(StringCommand, 'command')
-
-        while not self.cli.wait_for_service(timeout_sec=1.0):
-            self.logger.info('service not available, waiting again...')
-        self.req = StringCommand.Request()
-
-        self.result = None
+# define state Search
+class Search(smach.State):
+    def __init__(self, _node):
+        smach.State.__init__(self, outcomes=['succeeded','finished'])
+        self.counter = 0
+        self.logger = _node.get_logger()
 
     def execute(self, userdata):
+        self.logger.info('I am searching.')
+        if self.counter < 3:
+            self.logger.info('Got a sweet.')
+            self.counter += 1
+            return 'succeeded'
+        else:
+            self.logger.info('I am full.')
+            return 'finished'
 
-        self.send_request()
+# define state Eat
+class Eat(smach.State):
+    def __init__(self, _node):
+        smach.State.__init__(self, outcomes=['done'])
+        self.logger = _node.get_logger()
 
-        return "exit"
+    def execute(self, userdata):
+        self.logger.info('I am eating.')
+        return 'done'
 
-    def send_request(self):
-        self.req.command = "check"
-        self.future = self.cli.call_async(self.req)
-        print(self.future)
 
+class StateMachine(Node):
+    def __init__(self):
+        super().__init__('state_machine')
+
+    def execute(self):
+        # Create a SMACH state machine
+        sm = smach.StateMachine(outcomes=['end'])
+        # Open the container
+        with sm:
+            # Add states to the container
+            smach.StateMachine.add(
+                'SEARCH', Search(self),
+                transitions={'succeeded': 'EAT', 'finished': 'end'})
+            smach.StateMachine.add(
+                'EAT', Eat(self),
+                transitions={'done': 'SEARCH'})
+
+        # Execute SMACH plan
+        outcome = sm.execute()
+        self.get_logger().info(f'outcom: {outcome}')
 
 def main():
     rclpy.init()
+    node = StateMachine()
+    node.execute()
 
-    sm_top = smach.StateMachine(outcomes=['succeeded'])
-
-    with sm_top:
-        smach.StateMachine.add("SampleState", SampleState(), transitions={"exit": "succeeded"})
-
-    outcome = sm_top.execute()
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
