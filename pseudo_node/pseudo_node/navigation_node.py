@@ -23,7 +23,7 @@ class NavigationServer(Node):
     
         if 0.7 > prob:    
             self.get_logger().info("Succeeded to move the target position")    
-            response.answer = "succeeded"
+            response.answer = "reached"
         else:    
             self.get_logger().info("Failed to move the target position")    
             response.answer = "failed"

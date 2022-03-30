@@ -1,7 +1,5 @@
 # ファイル名：sample_sm.py
 
-# 後日手厚い説明をコメントとして残します
-    
 import rclpy
 from rclpy.node import Node
 
