@@ -109,7 +109,7 @@ class Navigation(smach.State):
     def send_request(self):    
         self.future = self.cli.call_async(self.req)
 
-        サービスを動作させる処理
+        # サービスを動作させる処理
         while rclpy.ok():
             rclpy.spin_once(self.node)
             if self.future.done():
@@ -196,7 +196,7 @@ class Manipulation(smach.State):
     def send_request(self):    
         self.future = self.cli.call_async(self.req)
 
-        サービスを動作させる処理
+        # サービスを動作させる処理
         while rclpy.ok():
             rclpy.spin_once(self.node)
             if self.future.done():
