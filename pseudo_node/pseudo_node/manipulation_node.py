@@ -37,7 +37,3 @@ def main(args=None):
     rclpy.spin(manipulation_server)
 
     rclpy.shutdown()
-
-
-if __name__ == '__main__':
-    main()
