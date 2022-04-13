@@ -14,8 +14,6 @@ class ManipulationServer(Node):
             StringCommand, 'manipulation/command', self.command_callback)
 
     def command_callback(self, request, response):
-        self.get_logger().info(f"{request.command}")
-
         sleep(1)
         
         prob = random.random()
