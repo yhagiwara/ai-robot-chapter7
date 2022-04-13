@@ -36,8 +36,4 @@ def main(args=None):
         
     rclpy.spin(navigation_server)
     
-    rclpy.shutdown()    
-    
-    
-if __name__ == '__main__':
-    main()
+    rclpy.shutdown()
