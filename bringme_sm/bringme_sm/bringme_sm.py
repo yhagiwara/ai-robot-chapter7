@@ -35,7 +35,7 @@ def main():
 # 音声関連のダミーステート
 class Voice(smach.State):    
     def __init__(self, node):    
-        smach.State.__init__(self, output_keys=["target_object"], outcomes=["succeeded", "failed"])
+        smach.State.__init__(self, output_keys=["target_object", "target_location"], outcomes=["succeeded", "failed"])
     
         # Nodeを作成しています
         self.node = node
@@ -82,7 +82,7 @@ class Voice(smach.State):
 # 移動関連のダミーステート
 class Navigation(smach.State):    
     def __init__(self, node):           
-        smach.State.__init__(self, input_keys=["target_object"], outcomes=["succeeded", "failed"])
+        smach.State.__init__(self, input_keys=["target_location"], outcomes=["succeeded", "failed"])
 
         # Nodeを作成しています
         self.node = node
@@ -145,6 +145,7 @@ class Vision(smach.State):
 
         self.req.command = userdata.target_object   
         result = self.send_request()
+        userdata.target_object_pos = [0.12, -0.03, 0.4] # 単位は[m]
 
         if result:
             return "succeeded"
@@ -187,6 +188,7 @@ class Manipulation(smach.State):
     def execute(self, userdata):
         self.logger.info("物体把持ステートを開始します")
 
+        target_object_pos = userdata.target_object_pos
         self.req.command = "start"    
         result = self.send_request()
 
