@@ -1,5 +1,3 @@
-# ファイル名：main_sm.py in bringme_sm
-    
 import rclpy
 from rclpy.node import Node
 import smach    
