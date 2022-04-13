@@ -17,13 +17,13 @@ class VoiceServer(Node):
         sleep(1)
             
         prob = random.random()    
-        self.get_logger().info(f"Try to recognize your voice")    
+        self.get_logger().info(f"音声認識をします")    
     
         if 0.5 > prob:    
-            self.get_logger().info("Succeeded to recognize your voice")    
+            self.get_logger().info("音声認識が成功しました")    
             response.answer = "succeeded"
         else:    
-            self.get_logger().info("Failed to recognize your voice")    
+            self.get_logger().info("音声認識が失敗しました")    
             response.answer = "failed"
     
         return response    
