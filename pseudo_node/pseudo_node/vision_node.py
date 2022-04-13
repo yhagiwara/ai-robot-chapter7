@@ -22,7 +22,7 @@ class VisionServer(Node):
     
         if 0.5 > prob:
             self.get_logger().info("目標物体の検出が成功しました")
-            response.answer = "succeeded"
+            response.answer = "detected"
         else:    
             self.get_logger().info("目標物体の検出が失敗しました")    
             response.answer = "failed"
