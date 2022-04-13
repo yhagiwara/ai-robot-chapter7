@@ -23,7 +23,7 @@ class ManipulationServer(Node):
 
         if 0.7 > prob:
             self.get_logger().info("目標物体の把持が成功しました")
-            response.answer = "succeeded"
+            response.answer = "reached"
         else:
             self.get_logger().info("目標物体の把持が失敗しました")
             response.answer = "failed"
