@@ -19,13 +19,13 @@ class NavigationServer(Node):
         sleep(1)
             
         prob = random.random()    
-        self.get_logger().info(f"Try to move the target position")    
+        self.get_logger().info(f"目標座標へ移動します")    
     
         if 0.7 > prob:    
-            self.get_logger().info("Succeeded to move the target position")    
+            self.get_logger().info("目標座標への移動が成功しました")    
             response.answer = "reached"
         else:    
-            self.get_logger().info("Failed to move the target position")    
+            self.get_logger().info("目標座標への移動が失敗しました")    
             response.answer = "failed"
     
         return response    
