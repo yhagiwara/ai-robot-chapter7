@@ -32,7 +32,7 @@ def main():
     node.execute()
     
 
-# 音声関連のダミーノード
+# 音声関連のダミーステート
 class Voice(smach.State):    
     def __init__(self, node):    
         smach.State.__init__(self, output_keys=["target_object"], outcomes=["succeeded", "failed"])
@@ -50,7 +50,7 @@ class Voice(smach.State):
         self.result = None
 
     def execute(self, userdata):        
-        self.logger.info("Start voice recognition")        
+        self.logger.info("音声認識ステートを開始します")
         
         self.req.command = "start"        
         result = self.send_request()        
@@ -79,7 +79,7 @@ class Voice(smach.State):
         return response.answer
 
 
-# 移動関連のダミーノード
+# 移動関連のダミーステート
 class Navigation(smach.State):    
     def __init__(self, node):           
         smach.State.__init__(self, input_keys=["target_object"], outcomes=["succeeded", "failed"])
@@ -97,6 +97,7 @@ class Navigation(smach.State):
         self.result = None
 
     def execute(self, userdata):
+        self.logger.info("ナビゲーションステートを開始します")
 
         self.req.command = userdata.target_location    
         result = self.send_request()
@@ -122,7 +123,7 @@ class Navigation(smach.State):
             return False
 
 
-# 物体検出関連のダミーノード
+# 物体検出関連のダミーステート
 class Vision(smach.State):    
     def __init__(self, node):    
         smach.State.__init__(self, input_keys=["target_object"], output_keys=["target_object_pos"], outcomes=["succeeded", "failed"])
@@ -140,6 +141,7 @@ class Vision(smach.State):
         self.result = None
 
     def execute(self, userdata):
+        self.logger.info("物体認識ステートを開始します")
 
         self.req.command = userdata.target_object   
         result = self.send_request()
@@ -165,7 +167,7 @@ class Vision(smach.State):
             return False
 
 
-# 物体把持関連のダミーノード
+# 物体把持関連のダミーステート
 class Manipulation(smach.State):    
     def __init__(self, node):    
         smach.State.__init__(self, input_keys=["target_object_pos"], outcomes=["exit", "failed"])
@@ -183,7 +185,7 @@ class Manipulation(smach.State):
         self.result = None
 
     def execute(self, userdata):
-        self.logger.info("Try to grasp the target object")
+        self.logger.info("物体把持ステートを開始します")
 
         self.req.command = "start"    
         result = self.send_request()
