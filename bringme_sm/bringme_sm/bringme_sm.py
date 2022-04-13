@@ -102,7 +102,10 @@ class Navigation(smach.State):
         self.req.command = userdata.target_location    
         result = self.send_request()
 
-        return result
+        if result:
+            return 'succeeded'
+        else:
+            return 'failed'
 
     def send_request(self):    
         self.future = self.cli.call_async(self.req)
