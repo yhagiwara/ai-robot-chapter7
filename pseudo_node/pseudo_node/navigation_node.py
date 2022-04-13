@@ -13,13 +13,11 @@ class NavigationServer(Node):
         self.srv = self.create_service(    
             StringCommand, 'navigation/command', self.command_callback)    
         
-    def command_callback(self, request, response):    
-        self.get_logger().info(request.command)
-
+    def command_callback(self, request, response):
         sleep(1)
             
         prob = random.random()    
-        self.get_logger().info(f"目標座標へ移動します")    
+        self.get_logger().info(f"目標座標へ移動します {request.command}")
     
         if 0.7 > prob:    
             self.get_logger().info("目標座標への移動が成功しました")    
