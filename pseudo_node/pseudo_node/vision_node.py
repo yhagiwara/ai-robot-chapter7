@@ -38,7 +38,3 @@ def main(args=None):
     rclpy.spin(vision_server)    
     
     rclpy.shutdown()    
-    
-    
-if __name__ == '__main__':    
-    main()
