@@ -19,13 +19,13 @@ class ManipulationServer(Node):
         sleep(1)
         
         prob = random.random()
-        self.get_logger().info(f"Try to manipulate the target object")
+        self.get_logger().info(f"目標の物体を把持します")
 
         if 0.7 > prob:
-            self.get_logger().info("Succeeded to manipulate the target object")
+            self.get_logger().info("目標物体の把持が成功しました")
             response.answer = "succeeded"
         else:
-            self.get_logger().info("Failed to manipulate the target object")
+            self.get_logger().info("目標物体の把持が失敗しました")
             response.answer = "failed"
 
         return response
