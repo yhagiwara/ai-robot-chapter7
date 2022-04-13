@@ -178,7 +178,7 @@ class Manipulation(smach.State):
         self.logger = self.node.get_logger()        
         
         # サービスにおけるクライアントを作成
-        self.cli = self.node.create_client(StringCommand, 'vision/command')
+        self.cli = self.node.create_client(StringCommand, 'manipulation/command')
         while not self.cli.wait_for_service(timeout_sec=1.0):        
             self.logger.info('サービスへの接続待ちです・・・')        
         self.req = StringCommand.Request()    
