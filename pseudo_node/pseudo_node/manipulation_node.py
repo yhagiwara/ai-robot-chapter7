@@ -1,4 +1,4 @@
-from ai_robot_book_interfaces.srv import StringCommand
+from airobot_interfaces.srv import StringCommand
 
 import rclpy
 from rclpy.node import Node
