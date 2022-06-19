@@ -17,7 +17,7 @@ class ManipulationServer(Node):
         sleep(1)
         
         prob = random.random()
-        self.get_logger().info(f"目標の物体を把持します")
+        self.get_logger().info(f"目標物体を把持します")
 
         if 0.7 > prob:
             self.get_logger().info("目標物体の把持が成功しました")
